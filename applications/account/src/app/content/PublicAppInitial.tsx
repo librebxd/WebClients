@@ -65,6 +65,17 @@ const loginPaths = [
 
 const ephemeralLoginPaths = [SSO_PATHS.APP_SWITCHER, SSO_PATHS.REAUTH];
 
+const getLoginLocationState = (location: H.Location<any>): LoginLocationState | null => {
+    const state = location.state;
+    if (!state || typeof state !== 'object') {
+        return null;
+    }
+    if (!('type' in state) || !('location' in state) || !('payload' in state)) {
+        return null;
+    }
+    return state as LoginLocationState;
+};
+
 export const PublicAppInitial = ({ sessions }: { sessions: { initialSessionsLength: number } }) => {
     const silentApi = useSilentApi();
     const history = useHistory();
@@ -72,7 +83,7 @@ export const PublicAppInitial = ({ sessions }: { sessions: { initialSessionsLeng
     const [forkState, setForkState] = useState<ProduceForkData | null>(readForkState);
     const [activeSessions, setActiveSessions] = useState<ActiveSession[]>();
     const [maybeHasActiveSessions] = useState(Boolean(sessions.initialSessionsLength));
-    const [locationState, setLocationState] = useState<null | LoginLocationState>(null);
+    const [locationState, setLocationState] = useState<null | LoginLocationState>(() => getLoginLocationState(location));
 
     const searchParams = new URLSearchParams(location.search);
 
@@ -109,7 +120,7 @@ export const PublicAppInitial = ({ sessions }: { sessions: { initialSessionsLeng
         }
         setLocationState(result);
         if (result.location) {
-            history.push(result.location);
+            history.push(result.location, result);
         }
         const payload = result.payload;
         if (payload && 'session' in payload) {
@@ -205,7 +216,7 @@ export const PublicAppInitial = ({ sessions }: { sessions: { initialSessionsLeng
     const props: PublicAppInteractiveProps = {
         loader,
         location,
-        locationState,
+        locationState: locationState ?? getLoginLocationState(location),
         handleLoginResult,
         hasBackToSwitch,
         handleLogin,

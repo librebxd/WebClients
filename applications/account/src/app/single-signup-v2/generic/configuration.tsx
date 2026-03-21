@@ -52,7 +52,7 @@ export const getGenericConfiguration = ({
     return {
         ...mailConfiguration,
         product: toApp ?? mailConfiguration.product,
-        signupTypes: [SignupType.Proton, SignupType.External],
+        signupTypes: [SignupType.External, SignupType.Proton],
         logo,
         CustomStep: getCustomStep({ hasExploreStep: !toApp }),
     };

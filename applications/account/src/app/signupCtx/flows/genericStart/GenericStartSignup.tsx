@@ -92,7 +92,7 @@ const GenericStartSignup = (props: BaseSignupContextProps) => {
             }}
             accountFormDataConfig={{
                 defaultEmail: searchParams.get('email') || '',
-                availableSignupTypes: new Set([SignupType.Proton, SignupType.External]),
+                availableSignupTypes: new Set([SignupType.External, SignupType.Proton]),
             }}
         >
             <GenericStartSignupInner />

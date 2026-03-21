@@ -56,38 +56,6 @@ module.exports = ({
                   new ReactRefreshWebpackPlugin({
                       overlay: false,
                   }),
-                  (warningLogs || errorLogs) &&
-                      new ESLintPlugin({
-                          extensions: ['js', 'ts', 'tsx'],
-                          eslintPath: require.resolve('eslint'),
-                          context: path.resolve('.'),
-                          emitWarning: warningLogs,
-                          emitError: errorLogs,
-                          failOnError: false,
-                          failOnWarning: false,
-                          // ESLint class options
-                          cwd: path.resolve('.'),
-                          cache: true,
-                      }),
-                  (warningLogs || errorLogs) &&
-                      new ForkTsCheckerWebpackPlugin({
-                          typescript: {
-                              memoryLimit: 4096,
-                          },
-                          async: true,
-                          formatter: 'basic',
-                          issue: {
-                              include: (issue) => {
-                                  if (warningLogs && issue.severity === 'warning') {
-                                      return true;
-                                  }
-                                  if (errorLogs && issue.severity === 'error') {
-                                      return true;
-                                  }
-                                  return false;
-                              },
-                          },
-                      }),
               ]),
 
         /*

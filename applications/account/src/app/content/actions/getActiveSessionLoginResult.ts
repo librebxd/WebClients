@@ -1,5 +1,6 @@
 import type { AuthSession } from '@proton/components/containers/login/interface';
 import { getAppHref } from '@proton/shared/lib/apps/helper';
+import { getIsDriveApp } from '@proton/shared/lib/authentication/apps';
 import { ForkType, getShouldReAuth } from '@proton/shared/lib/authentication/fork';
 import {
     GetActiveSessionType,
@@ -17,6 +18,33 @@ import { getLoginResult } from './getLoginResult';
 import { getProduceForkLoginResult } from './getProduceForkLoginResult';
 import { getSanitizedLocationDescriptorObject } from './getSanitizedLocationDescriptorObject';
 import type { LoginResult } from './interface';
+
+const getDriveLogoutRedirectResult = ({
+    initialSearchParams,
+    preAppIntent,
+    sessionsResult,
+}: {
+    initialSearchParams: URLSearchParams;
+    preAppIntent?: APP_NAMES;
+    sessionsResult: GetActiveSessionsResult;
+}): LoginResult | undefined => {
+    const reason = initialSearchParams.get('reason');
+
+    if (sessionsResult.sessions.length > 0 || !getIsDriveApp(preAppIntent)) {
+        return;
+    }
+
+    if (reason !== 'signout' && reason !== 'session-expired') {
+        return;
+    }
+
+    return {
+        type: 'done',
+        payload: {
+            url: new URL(getAppHref('/', preAppIntent)),
+        },
+    };
+};
 
 export const getActiveSessionLoginResult = async ({
     api,
@@ -120,6 +148,15 @@ export const getActiveSessionLoginResult = async ({
             }),
             payload: null,
         };
+    }
+
+    const driveLogoutRedirectResult = getDriveLogoutRedirectResult({
+        initialSearchParams,
+        preAppIntent,
+        sessionsResult,
+    });
+    if (driveLogoutRedirectResult) {
+        return driveLogoutRedirectResult;
     }
 
     if (autoSignIn) {
