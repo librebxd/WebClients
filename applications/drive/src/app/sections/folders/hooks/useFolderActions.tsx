@@ -84,7 +84,7 @@ export const useFolderActions = ({ allSortedItems, selectedItems, shareId, linkI
                 previewableNodeUids,
             });
         } else {
-            openLegacyPreview(shareId, linkId);
+            openLegacyPreview(shareId, item.linkId);
         }
     };
 
