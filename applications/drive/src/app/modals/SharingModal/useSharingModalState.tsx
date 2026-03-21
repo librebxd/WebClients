@@ -283,7 +283,12 @@ export const useSharingModalState = ({
                     setCanChangePermissions(effectiveRoleOnParent === MemberRole.Admin);
                 }
 
-                const ownerEmail = nodeInfo.ownedBy.email;
+                const ownerEmail =
+                    nodeInfo.ownedBy?.email ||
+                    (nodeInfo.membership?.sharedBy?.ok
+                        ? nodeInfo.membership.sharedBy.value
+                        : nodeInfo.membership?.sharedBy?.error?.claimedAuthor) ||
+                    (nodeInfo.keyAuthor?.ok ? nodeInfo.keyAuthor.value : nodeInfo.keyAuthor?.error?.claimedAuthor);
                 if (ownerEmail) {
                     setOwnerEmail(ownerEmail);
                 }
