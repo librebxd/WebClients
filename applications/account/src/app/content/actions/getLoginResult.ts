@@ -4,7 +4,7 @@ import { getAppHref } from '@proton/shared/lib/apps/helper';
 import { getSlugFromApp } from '@proton/shared/lib/apps/slugHelper';
 import { SessionSource } from '@proton/shared/lib/authentication/SessionInterface';
 import { getToApp } from '@proton/shared/lib/authentication/apps';
-import { getShouldReAuth } from '@proton/shared/lib/authentication/fork';
+import { ForkVersion, getShouldReAuth } from '@proton/shared/lib/authentication/fork';
 import { getOAuthSettingsUrl } from '@proton/shared/lib/authentication/fork/oauth2SettingsUrl';
 import { getReturnUrl } from '@proton/shared/lib/authentication/returnUrl';
 import { APPS, type APP_NAMES, SETUP_ADDRESS_PATH } from '@proton/shared/lib/constants';
@@ -214,6 +214,41 @@ export const getLoginResult = async ({
             data: {
                 type: SSOType.OAuth,
                 payload: { oauthData: forkState.payload.oauthData },
+            },
+            session,
+            api,
+            paths,
+        });
+    }
+
+    if (session.flow === 'switch' && maybeToApp && !forkState && maybeToApp !== APPS.PROTONACCOUNT) {
+        return getProduceForkLoginResult({
+            data: {
+                type: SSOType.Proton,
+                payload: {
+                    searchParameters: new URLSearchParams(),
+                    forkParameters: {
+                        state: crypto
+                            .getRandomValues(new Uint8Array(32))
+                            .toBase64({ alphabet: 'base64url', omitPadding: true }),
+                        app: maybeToApp,
+                        plan: undefined,
+                        independent: false,
+                        forkType: undefined,
+                        forkVersion: ForkVersion,
+                        prompt: undefined,
+                        promptType: 'default',
+                        promptBypass: 'none',
+                        payloadType: session.data.offlineKey ? 'offline' : 'default',
+                        payloadVersion: 3,
+                        unauthenticatedReturnUrl: '',
+                        returnUrl: getReturnUrl(initialSearchParams),
+                        redirectUrl: '',
+                        email: undefined,
+                        partnerId: undefined,
+                        localID: session.data.localID,
+                    },
+                },
             },
             session,
             api,
