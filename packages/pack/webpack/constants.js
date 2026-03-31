@@ -20,6 +20,9 @@ const BABEL_INCLUDE_NODE_MODULES = [
     'react-redux',
     'reselect',
     'immer',
+    '@proton/payments',
+    '@proton/metrics',
+    '@proton/drive',
 ];
 const BABEL_EXCLUDE_FILES = ['mailparser.js'];
 

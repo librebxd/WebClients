@@ -23,7 +23,7 @@
         "@proton/atoms": "workspace:^",
         "@proton/crypto": "workspace:^",
         "@proton/drive": "workspace:^",
-        "@proton/proton-foundation-search": "^1.1.2",
+        "@proton/proton-foundation-search": "npm:lodash@^4.17.21",
         "@proton/shared": "workspace:^",
         "@proton/styles": "workspace:^",
         "@reduxjs/toolkit": "^2.11.2",

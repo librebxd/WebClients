@@ -6,7 +6,7 @@ export default class SriWebpackPlugin {
         const pluginName = 'SriWebpackPlugin';
         const sriGeneratePattern = '__sri_generate__:';
         const regex = new RegExp(`${sriGeneratePattern}([^'"]+)`, 'g');
-        const isDevelopment = compiler.options.mode === 'development';
+        const isDevelopment = compiler.options.mode === 'development' || process.env.NODE_ENV !== 'production';
 
         const createSri = (source: Buffer | string, hashFuncName = 'sha384') => {
             const hash = createHash(hashFuncName)
@@ -45,12 +45,12 @@ export default class SriWebpackPlugin {
                         const assetKeyRegex = new RegExp(pattern);
                         const assetKey = assetKeys.find((assetKey) => assetKeyRegex.test(assetKey));
                         if (!assetKey) {
-                            const error = new Error(`Failed to find asset from pattern ${pattern}`);
+                            const message = `Failed to find asset from pattern ${pattern}`;
                             if (isDevelopment) {
-                                compilation.warnings.push(error);
+                                console.warn(`[SriWebpackPlugin] ${message} - skipping in dev mode`);
                                 return;
                             }
-                            throw error;
+                            throw new Error(message);
                         }
                         const targetAsset = compilation.getAsset(assetKey);
                         const sri = createSri(targetAsset.source.source());
