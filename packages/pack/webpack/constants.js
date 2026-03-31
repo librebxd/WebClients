@@ -23,6 +23,7 @@ const BABEL_INCLUDE_NODE_MODULES = [
     '@proton/payments',
     '@proton/metrics',
     '@proton/drive',
+    '@proton/sanitize',
 ];
 const BABEL_EXCLUDE_FILES = ['mailparser.js'];
 
